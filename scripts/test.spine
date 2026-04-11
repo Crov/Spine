@@ -1,0 +1,8 @@
+var name = "ABC";
+
+var num1 = 2;
+var num2 = 5;
+
+if (name == "ABC") {
+    return 2 + 5;
+}
