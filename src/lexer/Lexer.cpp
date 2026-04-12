@@ -1,4 +1,5 @@
 #include "Lexer.h"
+#include "magic_enum.hpp"
 
 #include <fmt/core.h>
 #include <fstream>
@@ -94,7 +95,14 @@ void Lexer::identifier() {
     while (isalnum(current()) || current() == '_') {
         m_current++;
     }
-    add_token(TokenType::Identifier);
+
+    std::string_view id = substr_view();
+    auto keyword = magic_enum::enum_cast<TokenType>(id, magic_enum::case_insensitive);
+
+    if (keyword.has_value() && is_keyword(keyword.value()))
+        add_token(keyword.value());
+    else
+        add_token(TokenType::Identifier); 
 }
 
 void Lexer::number() {
@@ -141,11 +149,22 @@ bool Lexer::match(char c) {
     return false;
 }
 
+bool Lexer::is_keyword(TokenType keyword) {
+    return std::count(KEYWORDS.begin(), KEYWORDS.end(), keyword) > 0;
+}
+
 std::string Lexer::substr() {
     if (is_at_end()) {
         return "";
     }
     return m_source.substr(m_start, m_current-m_start);
+}
+
+std::string_view Lexer::substr_view() {
+    if (is_at_end()) {
+        return "";
+    }
+    return std::string_view { &m_source[m_start], m_current-m_start };
 }
 
 }

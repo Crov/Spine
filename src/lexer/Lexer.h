@@ -25,7 +25,9 @@ private:
     bool is_at_end() const;
     char current() const;
     bool match(char c);
+    bool is_keyword(TokenType);
     std::string substr();
+    std::string_view substr_view();
 
 private:
     std::string m_source {};
