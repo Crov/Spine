@@ -67,10 +67,15 @@ void Lexer::handle_tokens() {
             add_token(match('=') ? TokenType::LessEq : TokenType::Less); break;
         case '>':
             add_token(match('=') ? TokenType::GreaterEq : TokenType::Greater); break;
+        case '!':
+            if (match('=')) add_token(TokenType::NotEq); break;
 
+        case '#':
+            while (current() != '\n' && !is_at_end()) m_current++; break;
+        
         case '\n':
             new_line(); break;
-
+        
         default:
             if (isspace(c)) {}
             else if (isalpha(c) || c == '_') { identifier(); }

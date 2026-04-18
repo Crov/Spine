@@ -3,12 +3,13 @@ spine:
     var debug_mode = "enabled"
     var retry_limit = 3
 
+# This is a comment.
 task "deploy_service":
     var target_dir = "./build/out"
     var remote_host = "192.168.1.50"
 
     if retry_limit >= 1:
-        copy "./local_assets" -> remote_host + ":" + target_dir
+        copy "./local_assets" -> remote_host + ":" + target_dir # This is also a comment.
         var status = "success"
     
     task "cleanup":
