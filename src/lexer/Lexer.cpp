@@ -38,7 +38,7 @@ void Lexer::handle_tokens() {
         case '+':
             add_token(TokenType::Plus); break;
         case '-':
-            add_token(TokenType::Minus); break;
+            add_token(match('>') ? TokenType::Arrow : TokenType::Minus); break;
         case '*':
             add_token(TokenType::Mul); break;
         case '/':
@@ -47,18 +47,12 @@ void Lexer::handle_tokens() {
             add_token(TokenType::LeftParen); break;
         case ')':
             add_token(TokenType::RightParen); break;
-        case '{':
-            add_token(TokenType::LeftBrace); break;
-        case '}':
-            add_token(TokenType::RightBrace); break;
-        case '[':
-            add_token(TokenType::LeftBracket); break;
-        case ']':
-            add_token(TokenType::RightBracket); break;
         case ',':
             add_token(TokenType::Comma); break;
         case ';':
             add_token(TokenType::Semicolon); break;
+        case ':':
+            add_token(TokenType::Colon); break;
 
         case '=':
             add_token(match('=') ? TokenType::EqEq : TokenType::Eq); break;
@@ -66,12 +60,6 @@ void Lexer::handle_tokens() {
             add_token(match('=') ? TokenType::LessEq : TokenType::Less); break;
         case '>':
             add_token(match('=') ? TokenType::GreaterEq : TokenType::Greater); break;
-        case '!':
-            add_token(match('=') ? TokenType::NotEq : TokenType::Not); break;
-        case '&':
-            add_token(match('&') ? TokenType::AndAnd : TokenType::And); break;
-        case '|':
-            add_token(match('|') ? TokenType::OrOr : TokenType::Or); break;
 
         case '\n':
             m_line++; break;

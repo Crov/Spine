@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-    std::filesystem::path path = "C:/Users/User/Dev/Spine/scripts/test.spine";
+    std::filesystem::path path = "C:/Users/User/Dev/Spine/scripts/running/test.spine";
 
     Spine::Lexer lexer(path);
 

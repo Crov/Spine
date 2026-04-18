@@ -1,0 +1,10 @@
+spine:
+    var x = 1
+    var padding = 10
+    var total_width = (x + padding) * 2
+
+task "increment":
+    var next_id = x + 1
+    copy "./temp" -> "./archive/file_{next_id}"
+    
+    var x = next_id
