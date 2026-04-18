@@ -53,6 +53,9 @@ enum class TokenType {
     Live,
     Dry,
 
+    Indent,
+    Dedent,
+
     EndOfFile
 };
 

@@ -1,0 +1,16 @@
+spine:
+    var version = 1.0
+    var debug_mode = "enabled"
+    var retry_limit = 3
+
+task "deploy_service":
+    var target_dir = "./build/out"
+    var remote_host = "192.168.1.50"
+
+    if retry_limit >= 1:
+        copy "./local_assets" -> remote_host + ":" + target_dir
+        var status = "success"
+    
+    task "cleanup":
+        var temp_files = 15
+        var deleted = temp_files * 1

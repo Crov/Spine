@@ -8,6 +8,7 @@ namespace Spine {
 
 Lexer::Lexer(const std::filesystem::path& path) {
     std::fstream stream { path };
+    m_tokens.reserve(1024);
 
     if (!stream.is_open()) {
         throw std::runtime_error(fmt::format("Failed to open source file with path {}.", path.string()));
@@ -25,6 +26,12 @@ const std::vector<Token>& Lexer::tokenize() {
             handle_tokens();
             m_start = m_current;
         }
+
+        while (m_indents.size() > 1) {
+            m_indents.pop_back();
+            add_token(TokenType::Dedent, "");
+        }
+
         add_token(TokenType::EndOfFile);
     }
     return m_tokens;
@@ -62,7 +69,7 @@ void Lexer::handle_tokens() {
             add_token(match('=') ? TokenType::GreaterEq : TokenType::Greater); break;
 
         case '\n':
-            m_line++; break;
+            new_line(); break;
 
         default:
             if (isspace(c)) {}
@@ -76,6 +83,10 @@ void Lexer::handle_tokens() {
 
 void Lexer::add_token(TokenType type) {
     m_tokens.emplace_back(Token{substr(), type, m_line});
+}
+
+void Lexer::add_token(TokenType type, std::string lexeme) {
+    m_tokens.emplace_back(Token{lexeme, type, m_line});
 }
 
 
@@ -117,6 +128,33 @@ void Lexer::string() {
 
     add_token(TokenType::String);
     m_current++;
+}
+
+void Lexer::new_line() {
+    m_line++;
+    int i {0};
+    while (!is_at_end() && (current() == ' ' || current() == '\t')) {
+        i++;
+        m_current++;
+    }
+
+    if (is_at_end() || current() == '\n') return;
+
+    if (i > m_indents.back()) {
+        m_indents.push_back(i);
+        add_token(TokenType::Indent, "");
+    }
+    else if (i < m_indents.back()) {
+        while (m_indents.size() > 1 && i < m_indents.back()) {
+            m_indents.pop_back();
+            add_token(TokenType::Dedent, "");
+        }
+
+        if (m_indents.empty() || m_indents.back() != i) {
+            throw std::runtime_error("Invalid indentation level");
+        }
+    }
+    
 }
 
 

@@ -16,10 +16,12 @@ public:
 private:
     void handle_tokens();
     void add_token(TokenType type);
+    void add_token(TokenType type, std::string lexeme);
 
     void identifier();
     void number();
     void string();
+    void new_line();
 
 private:
     bool is_at_end() const;
@@ -32,6 +34,7 @@ private:
 private:
     std::string m_source {};
     std::vector<Token> m_tokens {};
+    std::vector<int> m_indents {0};
 
     size_t m_start {};
     size_t m_current {};
