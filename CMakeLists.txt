@@ -25,6 +25,7 @@ target_include_directories(
 add_executable(spine
     src/main.cpp
     src/lexer/Lexer.cpp
+    src/parser/Parser.cpp
 )
 
 target_compile_features(spine PRIVATE cxx_std_20)

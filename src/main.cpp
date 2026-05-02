@@ -1,20 +1,22 @@
 #include "lexer/Lexer.h"
-#include "magic_enum.hpp"
+#include "parser/Parser.h"
 
 #include <iostream>
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Usage: spien <source_file_path\n";
+        std::cerr << "Usage: spine <source_file_path>\n";
         return 1;
     }
 
-    std::filesystem::path path = "C:/Users/User/Dev/Spine/scripts/test.spine";
-
-    Spine::Lexer lexer(path);
-
-    for (const auto& token : lexer.tokenize()) {
-        std::cout << token.lexeme << "\t(" << magic_enum::enum_name(token.type) << ")\n";
+    try {
+        Spine::Lexer lexer(argv[1]);
+        Spine::Parser parser(lexer.tokenize());
+        parser.parse();
+        std::cout << "Parsed successfully.\n";
+    } catch (const std::exception& error) {
+        std::cerr << "error: " << error.what() << '\n';
+        return 1;
     }
 
     return 0;
