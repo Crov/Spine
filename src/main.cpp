@@ -1,5 +1,6 @@
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
+#include "runtime/Interpreter.h"
 
 #include <iostream>
 
@@ -12,8 +13,10 @@ int main(int argc, char* argv[]) {
     try {
         Spine::Lexer lexer(argv[1]);
         Spine::Parser parser(lexer.tokenize());
-        parser.parse();
-        std::cout << "Parsed successfully.\n";
+        const auto program = parser.parse();
+        Spine::Interpreter interpreter;
+        interpreter.execute(*program);
+        std::cout << "Executed successfully.\n";
     } catch (const std::exception& error) {
         std::cerr << "error: " << error.what() << '\n';
         return 1;

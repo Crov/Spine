@@ -38,4 +38,4 @@ private:
     size_t m_current {};
 };
 
-} // namespace Spine
+}
