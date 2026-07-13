@@ -1,0 +1,6 @@
+spine:
+    var base = 10
+    var result = base + 5 * 2
+    var grouped = (base + 5) * 2
+    var label = "result: " + result
+

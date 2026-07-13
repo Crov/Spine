@@ -1,0 +1,10 @@
+spine:
+    var retries = 3
+    var limit = 2
+
+    if retries > limit:
+        var message = "retry limit exceeded"
+
+    if retries == 3:
+        var status = "ready"
+

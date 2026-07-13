@@ -1,0 +1,30 @@
+spine:
+    var service = "spine-api"
+    var major_version = 2
+    var minor_version = 4
+    var patch_version = 1
+    var version = major_version * 100 + minor_version * 10 + patch_version
+    var environment = "staging"
+    var retry_limit = 3
+
+    if retry_limit > 0:
+        var release_name = service + "-" + environment
+        var release_number = version + retry_limit
+
+task "prepare":
+    var build_directory = "./build/" + environment
+    var package_name = service + "-" + environment
+
+    if major_version >= 2:
+        var compatibility = "modern"
+
+    task "verify":
+        var expected_files = 4
+        var verified_files = expected_files * 1
+
+task "deploy":
+    var target = "remote/" + environment
+    var deployment_attempt = retry_limit - 1
+
+    if deployment_attempt >= 1:
+        var deployment_status = "ready"

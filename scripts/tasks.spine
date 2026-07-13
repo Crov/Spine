@@ -1,0 +1,11 @@
+spine:
+    var version = 1
+
+task "build":
+    var output = "build-" + version
+
+    task "clean":
+        var removed = 1
+
+task "deploy":
+    var target = "production"
