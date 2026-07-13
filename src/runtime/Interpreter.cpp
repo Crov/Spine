@@ -9,7 +9,22 @@ namespace Spine {
 void Interpreter::execute(const BlockStatement& program) {
     m_global = std::make_unique<Environment>();
     m_current = m_global.get();
-    execute_block(program);
+    m_tasks.clear();
+    register_tasks(program);
+    execute_program(program);
+}
+
+void Interpreter::execute(
+    const BlockStatement& program,
+    const std::string& task_name
+) {
+    execute(program);
+    const auto* task = find_task(task_name);
+    if (!task) {
+        throw std::runtime_error("Unknown task: " + task_name);
+    }
+
+    execute_block(*task->body);
 }
 
 void Interpreter::Environment::define(const std::string& name, Value value) {
@@ -134,6 +149,51 @@ void Interpreter::execute_block(const BlockStatement& block) {
     }
 
     m_current = local.parent;
+}
+
+void Interpreter::execute_program(const BlockStatement& program) {
+    for (const auto& statement : program.statements) {
+        auto* block = dynamic_cast<const BlockStatement*>(statement.get());
+        if (block) {
+            for (const auto& nested_statement : block->statements) {
+                if (!dynamic_cast<const TaskStatement*>(nested_statement.get())) {
+                    execute(*nested_statement);
+                }
+            }
+        } else if (!dynamic_cast<const TaskStatement*>(statement.get())) {
+            execute(*statement);
+        }
+    }
+}
+
+void Interpreter::register_tasks(const BlockStatement& block) {
+    for (const auto& statement : block.statements) {
+        auto* nested_block = dynamic_cast<const BlockStatement*>(statement.get());
+        if (nested_block) {
+            register_tasks(*nested_block);
+            continue;
+        }
+
+        auto* task = dynamic_cast<const TaskStatement*>(statement.get());
+        if (task) {
+            register_task(*task);
+        }
+    }
+}
+
+void Interpreter::register_task(const TaskStatement& task) {
+    m_tasks.push_back(&task);
+    register_tasks(*task.body);
+}
+
+const TaskStatement* Interpreter::find_task(const std::string& name) const {
+    for (const auto* task : m_tasks) {
+        if (task->name == name) {
+            return task;
+        }
+    }
+
+    return nullptr;
 }
 
 bool Interpreter::is_truthy(const Value& value) const {

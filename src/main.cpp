@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Usage: spine <source_file_path>\n";
+        std::cerr << "Usage: spine <source_file_path> [task_name]\n";
         return 1;
     }
 
@@ -15,7 +15,11 @@ int main(int argc, char* argv[]) {
         Spine::Parser parser(lexer.tokenize());
         const auto program = parser.parse();
         Spine::Interpreter interpreter;
-        interpreter.execute(*program);
+        if (argc >= 3) {
+            interpreter.execute(*program, argv[2]);
+        } else {
+            interpreter.execute(*program);
+        }
         std::cout << "Executed successfully.\n";
     } catch (const std::exception& error) {
         std::cerr << "error: " << error.what() << '\n';
